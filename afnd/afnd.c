@@ -1,14 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <strings.h>
 #include "afnd.h"
 
 struct _Afnd {
-    bool *final_states;
     char *symbols;
+    int n_symbols;
+    char **states_names;
+    bool *states_final;
+    int n_states;
     int ***transitions;
     int **transitions_count;
-    int n_states;
-    int n_symbols;
     int start_state;
     bool *current_states;
 };
@@ -16,120 +18,25 @@ struct _Afnd {
 bool process_symbol(Afnd *afnd, char symbol);
 int get_symbol_index(Afnd *afnd, char symbol);
 
-Afnd *create_afnd(bool *final_states, char *symbols, int ***transitions, int **transitions_count, int n_states, int n_symbols, int start_state) {
+Afnd *create_afnd(char *symbols, int n_symbols) {
     Afnd *afnd;
-    int i, j, k;
 
-    if (final_states == NULL || symbols == NULL || transitions == NULL) return NULL;
-    if (n_states <= 0 || n_symbols <= 0) return NULL;
-    if (start_state < 0 || start_state >= n_states) return NULL;
-    for (i = 0; i < n_states; i++) if (transitions[i] == NULL) return NULL;
+    if (symbols == NULL) return NULL;
 
     afnd = (Afnd *) malloc(sizeof(Afnd));
     if (afnd == NULL) return NULL;
 
-    afnd->final_states = (bool *) malloc(sizeof(bool)*n_states);
-    if (afnd->final_states == NULL) {
-        free(afnd);
-        return NULL;
-    }
-
     afnd->symbols = (char *) malloc(sizeof(char)*n_symbols);
     if (afnd->symbols == NULL) {
-        free(afnd->final_states);
         free(afnd);
         return NULL;
     }
 
-    afnd->current_states = (bool *) malloc(sizeof(bool)*n_states);
-    if (afnd->current_states == NULL) {
-        free(afnd->symbols);
-        free(afnd->final_states);
-        free(afnd);
-        return NULL;
-    }
+    memcpy(afnd->symbols, symbol, sizeof(char)*n_symbols)
 
-
-    afnd->transitions_count = (int **) malloc(sizeof(int *)*n_states);
-    if (afnd->transitions_count == NULL) {
-        free(afnd->current_states);
-        free(afnd->symbols);
-        free(afnd->final_states);
-        free(afnd);
-        return NULL;
-    }
-
-    for (i = 0; i < n_states; i++) {
-        afnd->transitions_count[i] = (int *) malloc(sizeof(int)*n_symbols);
-        if (afnd->transitions_count[i] == NULL) {
-            for (j = 0; j < i; j++) {
-                free(afnd->transitions_count[j]);
-            }            
-            free(afnd->transitions_count);
-            free(afnd->current_states);
-            free(afnd->symbols);
-            free(afnd->final_states);
-            free(afnd);
-            return NULL;
-        }
-    }
-
-    afnd->transitions = (int ***) malloc(sizeof(int **)*n_states);
-    if (afnd->transitions == NULL) {
-        for (i = 0; i < n_states; i++) free(afnd->transitions_count[i]);
-        free(afnd->transitions_count);
-        free(afnd->current_states);
-        free(afnd->symbols);
-        free(afnd->final_states);
-        free(afnd);
-        return NULL;
-    }
-
-    for (i = 0; i < n_states; i++) {
-        afnd->transitions[i] = (int **) malloc(sizeof(int *)*n_symbols);
-        if (afnd->transitions[i] == NULL) {
-            for (int j = 0; j < i; j++) free(afnd->transitions[j]);
-            free(afnd->transitions);
-            for (j = 0; j < n_states; j++) free(afnd->transitions_count[j]);
-            free(afnd->transitions_count);
-            free(afnd->current_states);
-            free(afnd->symbols);
-            free(afnd->final_states);
-            free(afnd);
-            return NULL;
-        }
-
-        for (j = 0; j < n_symbols; j++) {
-            afnd->transitions[i][j] = (int *) malloc(sizeof(int)*transitions_count[i][j]);
-            // Comprobacion de errores
-        }
-    }
-
-    for (i = 0; i < n_states; i++) {
-        afnd->final_states[i] = final_states[i];
-    }
-
-    for (i = 0; i < n_symbols; i++) {
-        afnd->symbols[i] = symbols[i];
-    }
-
-    for (i = 0; i < n_states; i++) {
-        for (j = 0; j < n_symbols; j++) {
-            afnd->transitions_count[i][j] = transitions_count[i][j];
-        }
-    }
-
-    for (i = 0; i < n_states; i++) {
-        for (j = 0; j < n_symbols; j++) {
-            for (k = 0; k < transitions_count[i][j]; k++) {
-                afnd->transitions[i][j][k] = transitions[i][j][k];
-            }
-        }
-    }
-
-    afnd->n_states = n_states;
     afnd->n_symbols = n_symbols;
-    afnd->start_state = start_state;
+    afnd->n_states = 0;
+    afnd->start_state = -1;
 
     return afnd;
 }
