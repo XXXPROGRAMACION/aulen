@@ -1,1 +1,0 @@
-gcc main.c afnd.c afnd.h -o afnd
