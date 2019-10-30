@@ -17,9 +17,9 @@ AFND *AFNDTransforma(AFND *afnd) {
 
     IntListAdd(estados_iniciales, index);
     anadirConLambda(afnd, estados_iniciales);
-
     IntListSort(estados_iniciales);
-    IntListPrint(estados_iniciales);
+    
+    
 
     return NULL;
 }

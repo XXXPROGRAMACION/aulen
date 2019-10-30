@@ -1,7 +1,6 @@
 #ifndef AFND_LIST_H
 #define AFND_LIST_H
 
-#include "afnd.h"
 #include <stdbool.h>
 
 typedef struct _IntList IntList;
