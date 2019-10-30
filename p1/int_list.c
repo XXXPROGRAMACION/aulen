@@ -67,6 +67,29 @@ bool IntListContains(IntList *int_list, int value) {
     return false;
 }
 
+void IntListSort(IntList *int_list) {
+    int i, j, aux;
+    for (i = int_list->size-1; i >= 1; i--) {
+        for (j = 0; j < i; j++) {
+            if (int_list->values[j] > int_list->values[j+1]) {
+                aux = int_list->values[j];
+                int_list->values[j] = int_list->values[j+1];
+                int_list->values[j+1] = aux;
+            }
+        }
+    }
+}
+
+bool IntListCompare(IntList *int_list_1, IntList *int_list_2) {
+    int i;
+    if (int_list_1 == NULL || int_list_2 == NULL) return false;
+    if (int_list_1->size != int_list_2->size) return false;
+    for (i = 0; i < int_list_1->size; i++) {
+        if (int_list_1->values[i] != int_list_2->values[i]) return false;
+    }
+    return true;
+}
+
 void IntListPrint(IntList *int_list) {
     int i;
     if (int_list == NULL) {

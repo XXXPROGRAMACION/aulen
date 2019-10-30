@@ -12,6 +12,7 @@ void IntListFree(IntList *int_list);
 int IntListGet(IntList *int_list, int index);
 int IntListSize(IntList *int_list);
 bool IntListContains(IntList *int_list, int value);
+void IntListSort(IntList *int_list);
 void IntListPrint(IntList *int_list);
 
 #endif
