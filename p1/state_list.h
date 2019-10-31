@@ -1,17 +1,18 @@
-#ifndef AFND_LIST_QUEUE_H
-#define AFND_LIST_QUEUE_H
+#ifndef STATE_LIST_H
+#define STATE_LIST_H
 
 #include "int_list.h"
 #include <stdbool.h>
 
-typedef struct _IntListQueue IntListQueue;
+typedef struct _StateList StateList;
 
-IntListQueue *IntListQueueCreate();
-void IntListQueueAdd(IntListQueue *int_list_queue, IntList int_list);
-void IntListQueueFree(IntListQueue *int_list_queue);
-int IntListQueueGet(IntListQueue *int_list_queue, IntList int_list);
-int IntListQueueSize(IntListQueue *int_list_queue);
-bool IntListQueueContains(IntListQueue *int_list_queue, IntList int_list);
-void IntListQueuePrint(IntListQueue *int_list_queue);
+StateList *StateListCreate();
+void StateListFree(StateList *state_list);
+void StateListAdd(StateList *state_list, IntList *sub_states, IntList *conections);
+StateList *StateListGetSubStates(StateList *state_list, int index);
+StateList *StateListGetConections(StateList *state_list, int index);
+int StateListSize(StateList *state_list);
+bool StateListContainsSubstates(StateList *state_list, IntList *sub_states);
+void StateListPrint(StateList *state_list);
 
 #endif

@@ -30,7 +30,7 @@ IntList *IntListCreate() {
 
 void IntListFree(IntList *int_list) {
     if (int_list == NULL) return;
-    if (int_list->values != NULL) free(int_list->values);
+    free(int_list->values);
     free(int_list);
 }
 
@@ -50,12 +50,6 @@ int IntListGet(IntList *int_list, int index) {
 int IntListSize(IntList *int_list) {
     if (int_list == NULL) return -1;
     return int_list->size;
-}
-
-void IntListResize(IntList *int_list) {
-    if (int_list == NULL) return;
-    int_list->max_size *= 2;
-    int_list->values = (int *) realloc(int_list->values, sizeof(int)*int_list->max_size);
 }
 
 bool IntListContains(IntList *int_list, int value) {
@@ -105,4 +99,10 @@ void IntListPrint(IntList *int_list) {
         printf("%d", int_list->values[int_list->size-1]);
     }
     printf("]\n");
+}
+
+void IntListResize(IntList *int_list) {
+    if (int_list == NULL) return;
+    int_list->max_size *= 2;
+    int_list->values = (int *) realloc(int_list->values, sizeof(int)*int_list->max_size);
 }

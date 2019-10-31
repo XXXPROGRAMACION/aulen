@@ -7,11 +7,10 @@
 typedef struct _IntListQueue IntListQueue;
 
 IntListQueue *IntListQueueCreate();
-void IntListQueueAdd(IntListQueue *int_list_queue, IntList int_list);
 void IntListQueueFree(IntListQueue *int_list_queue);
-int IntListQueueGet(IntListQueue *int_list_queue, IntList int_list);
-int IntListQueueSize(IntListQueue *int_list_queue);
-bool IntListQueueContains(IntListQueue *int_list_queue, IntList int_list);
+void IntListQueueAdd(IntListQueue *int_list_queue, IntList *int_list);
+IntList *IntListQueueRemove(IntListQueue *int_list_queue);
+int IntListQueueIsEmpty(IntListQueue *int_list_queue);
 void IntListQueuePrint(IntListQueue *int_list_queue);
 
 #endif
