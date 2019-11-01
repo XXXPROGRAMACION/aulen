@@ -8,11 +8,13 @@ typedef struct _StateList StateList;
 
 StateList *StateListCreate();
 void StateListFree(StateList *state_list);
-void StateListAdd(StateList *state_list, IntList *sub_states, IntList *conections);
-StateList *StateListGetSubStates(StateList *state_list, int index);
-StateList *StateListGetConections(StateList *state_list, int index);
+void StateListAdd(StateList *state_list, IntList *substates);
+IntList *StateListGetSubstates(StateList *state_list, int index);
+IntList *StateListGetTransitionsTargets(StateList *state_list, int index);
+IntList *StateListGetTransitionsSymbols(StateList *state_list, int index);
 int StateListSize(StateList *state_list);
-bool StateListContainsSubstates(StateList *state_list, IntList *sub_states);
+bool StateListContainsSubstates(StateList *state_list, IntList *substates);
+int StateListGetSubstatesIndex(StateList *state_list, IntList *substates);
 void StateListPrint(StateList *state_list);
 
 #endif

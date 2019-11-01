@@ -25,7 +25,7 @@ AFND *AFNDInsertaTransicion(AFND *p_afnd, char *nombre_estado_i, char *nombre_si
 AFND *AFNDInsertaLTransicion(AFND *p_afnd, char *nombre_estado_i, char *nombre_estado_f );
 
 AFND *AFNDInsertaLetra(AFND *p_afnd, char *letra);
-void  AFNDImprimeConjuntoEstadosActual(FILE *fd, AFND *p_afnd);
+void AFNDImprimeConjuntoEstadosActual(FILE *fd, AFND *p_afnd);
 void AFNDImprimeCadenaActual(FILE *fd, AFND *p_afnd);
 void AFNDTransita(AFND *p_afnd);
 void AFNDProcesaEntrada(FILE *fd, AFND *p_afnd);

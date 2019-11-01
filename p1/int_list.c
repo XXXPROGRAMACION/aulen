@@ -1,6 +1,7 @@
 #include "int_list.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 struct _IntList {
     int *values;
@@ -26,6 +27,27 @@ IntList *IntListCreate() {
     }
 
     return int_list;
+}
+
+IntList *IntListCopy(IntList *int_list) {
+    IntList *int_list_copy;
+    if (int_list == NULL) return NULL;
+
+    int_list_copy = (IntList *) malloc(sizeof(IntList));
+    if (int_list_copy == NULL) return NULL;
+
+    int_list_copy->size = int_list->size;
+    int_list_copy->max_size = int_list->max_size;
+
+    int_list_copy->values = (int *) malloc(sizeof(int)*int_list_copy->max_size);
+    if (int_list_copy->values == NULL) {
+        free(int_list_copy);
+        return NULL;
+    }
+
+    memcpy(int_list_copy->values, int_list->values, sizeof(int)*int_list->size);
+
+    return int_list_copy;
 }
 
 void IntListFree(IntList *int_list) {
@@ -59,6 +81,15 @@ bool IntListContains(IntList *int_list, int value) {
         if (int_list->values[i] == value) return true;
     }
     return false;
+}
+
+int IntListGetIndex(IntList *int_list, int value) {
+    int i;
+    if (int_list == NULL) return -1;
+    for (i = 0; i < int_list->size; i++) {
+        if (int_list->values[i] == value) return i;
+    }
+    return -1;
 }
 
 void IntListSort(IntList *int_list) {
