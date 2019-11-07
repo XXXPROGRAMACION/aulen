@@ -8,8 +8,8 @@ all: $(EXE)
 clean:
 	rm -f *.o $(EXE)
 
-$(EXE): %: %.o afnd.o transforma.o int_list.o int_queue.o state_list.o
-	$(CC) $(CFLAGS) -o $@ $@.o afnd.o transforma.o int_list.o int_queue.o state_list.o
+$(EXE): %: %.o afnd.o transforma.o int_list.o state_list.o
+	$(CC) $(CFLAGS) -o $@ $@.o afnd.o transforma.o int_list.o state_list.o
 
 afnd.o: afnd.c afnd.h
 	$(CC) $(CFLAGSEX) -c $<
@@ -18,9 +18,6 @@ transforma.o: transforma.c transforma.h
 	$(CC) $(CFLAGS) -c $<
 
 int_list.o: int_list.c int_list.h
-	$(CC) $(CFLAGS) -c $<
-
-int_queue.o: int_queue.c int_queue.h
 	$(CC) $(CFLAGS) -c $<
 
 state_list.o: state_list.c state_list.h
