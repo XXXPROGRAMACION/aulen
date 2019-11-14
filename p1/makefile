@@ -1,9 +1,21 @@
 CC = gcc
 CFLAGS = -Wall -ansi -pedantic
 CFLAGSEX =
-EXE = main
+EXE = main tests
 
 all: $(EXE)
+
+run:
+	./main
+	
+debug:
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose ./main --debug
+
+run_tests:
+	./tests
+
+debug_tests:
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose ./tests --debug
 
 clean:
 	rm -f *.o $(EXE)
@@ -24,4 +36,7 @@ state_list.o: state_list.c state_list.h
 	$(CC) $(CFLAGS) -c $<
 
 main.o: main.c
+	$(CC) $(CFLAGS) -c $<
+
+tests.o: tests.c
 	$(CC) $(CFLAGS) -c $<

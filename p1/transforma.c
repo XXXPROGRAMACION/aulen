@@ -2,20 +2,17 @@
 #include "int_list.h"
 #include "state_list.h"
 #include <stdlib.h>
-#include <stdbool.h>
 #include <stdarg.h>
 #include <string.h>
-
-#define DEBUG true
 
 void clausuraLambda(AFND *afnd, IntList *subestados);
 IntList *transicionarConSimbolo(AFND *afnd, IntList *subestados, int simbolo);
 char *obtenerNombreEstado(AFND *afnd, IntList *subestados);
 int obtenerTipoEstado(AFND *afnd, IntList *subestados, int indice);
 bool esEstadoFinal(AFND *afnd, IntList *subestados);
-void debug(char *str, ...);
+void printDebug(bool debug, char *str, ...);
 
-AFND *AFNDTransforma(AFND *afnd) {
+AFND *AFNDTransforma(AFND *afnd, bool debug) {
     AFND *afd;
     IntList *subestados_iniciales, *subestados, *subestados_siguientes;
     IntList *destinos_transiciones, *simbolos_transiciones;
@@ -41,15 +38,15 @@ AFND *AFNDTransforma(AFND *afnd) {
     StateListAdd(estados, subestados_iniciales);
     IntListFree(subestados_iniciales);
 
-    debug("Nuevos estados:\n");
+    printDebug(debug, "Nuevos estados:\n");
     n_estados_procesados = 0;
     while (n_estados_procesados < StateListSize(estados)) {
         subestados = StateListGetSubstates(estados, n_estados_procesados);
         destinos_transiciones = StateListGetTransitionsTargets(estados, n_estados_procesados);
         simbolos_transiciones = StateListGetTransitionsSymbols(estados, n_estados_procesados);
 
-        debug("Procesando %d: ", n_estados_procesados);
-        if (DEBUG) IntListPrint(subestados);
+        printDebug(debug, "Procesando %d: ", n_estados_procesados);
+        if (debug) IntListPrint(subestados);
 
         for (i = 0; i < AFNDNumSimbolos(afnd); i++) {
             subestados_siguientes = transicionarConSimbolo(afnd, subestados, i);
@@ -61,14 +58,14 @@ AFND *AFNDTransforma(AFND *afnd) {
             if (!StateListContainsSubstates(estados, subestados_siguientes)) {
                 StateListAdd(estados, subestados_siguientes);
 
-                debug(" -> Estado %d añadido\n", StateListSize(estados)-1);
+                printDebug(debug, " -> Estado %d añadido\n", StateListSize(estados)-1);
             }
 
             indice = StateListGetSubstatesIndex(estados, subestados_siguientes);
             IntListAdd(destinos_transiciones, indice);
             IntListAdd(simbolos_transiciones, i);
             
-            debug(" -> Transición a %d con %s añadida\n", indice, AFNDSimboloEn(afnd, i));
+            printDebug(debug, " -> Transición a %d con %s añadida\n", indice, AFNDSimboloEn(afnd, i));
 
             IntListFree(subestados_siguientes);
         }
@@ -90,7 +87,8 @@ AFND *AFNDTransforma(AFND *afnd) {
         nombre_estado = obtenerNombreEstado(afnd, StateListGetSubstates(estados, i));
         tipo_estado = obtenerTipoEstado(afnd, StateListGetSubstates(estados, i), i);
         AFNDInsertaEstado(afd, nombre_estado, tipo_estado);
-        debug("Estado %d añadido con nombre %s\n", i, nombre_estado);
+        printDebug(debug, "Estado %d añadido con nombre %s\n", i, nombre_estado);
+        free(nombre_estado);
     }
 
     for (i = 0; i < StateListSize(estados); i++) {
@@ -196,9 +194,9 @@ bool esEstadoFinal(AFND *afnd, IntList *subestados) {
     return false;
 }
 
-void debug(char *format, ...) {
+void printDebug(bool debug, char *format, ...) {
     va_list args;
-    if (DEBUG) {
+    if (debug) {
         va_start(args, format);
         vprintf(format, args);
         va_end (args);
