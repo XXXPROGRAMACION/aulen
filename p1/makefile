@@ -18,7 +18,7 @@ debug_tests:
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose ./tests --debug
 
 clean:
-	rm -f *.o $(EXE)
+	rm -f *.o $(EXE) *.txt *.dot
 
 $(EXE): %: %.o afnd.o transforma.o int_list.o state_list.o
 	$(CC) $(CFLAGS) -o $@ $@.o afnd.o transforma.o int_list.o state_list.o

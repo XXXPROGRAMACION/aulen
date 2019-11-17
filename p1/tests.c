@@ -7,7 +7,8 @@
 
 bool test1(bool debug);
 bool test2(bool debug);
-bool test(AFND *afnd, AFND *afd, int n, char *cadena);
+bool test3(bool debug);
+bool test(AFND *afnd, AFND *afd, int *n, char *cadena);
 bool procesar_entrada(AFND *afnd, char *cadena);
 
 int main(int argc, char **argv) {
@@ -18,6 +19,9 @@ int main(int argc, char **argv) {
 	
 	if (!test1(debug)) return 0;
 	if (!test2(debug)) return 0;
+	if (!test3(debug)) return 0;
+
+	printf("Todos los tests se han ejecutado correctamente.");
 
 	return 0;
 }
@@ -25,8 +29,9 @@ int main(int argc, char **argv) {
 bool test1(bool debug) {
 	AFND *afnd;
 	AFND *afd;
+	int n;
 
-	afnd = AFNDNuevo("af11", 6, 3);
+	afnd = AFNDNuevo("test1", 6, 3);
 	
 	AFNDInsertaSimbolo(afnd, "+");
 	AFNDInsertaSimbolo(afnd, "0");
@@ -53,13 +58,24 @@ bool test1(bool debug) {
 
 	afd = AFNDTransforma(afnd, debug);
 
+	n = 1;
 	printf("Test 1 (autómata del enunciado):\n");
-	if (!test(afnd, afd, 1, "0.0")) return false;
-	if (!test(afnd, afd, 2, ".0")) return false;
-	if (!test(afnd, afd, 3, "0.")) return false;
-	if (!test(afnd, afd, 4, ".")) return false;
-	if (!test(afnd, afd, 5, "0")) return false;
+	if (!test(afnd, afd, &n, "0.0")) return false;
+	if (!test(afnd, afd, &n, ".0")) return false;
+	if (!test(afnd, afd, &n, "0.")) return false;
+	if (!test(afnd, afd, &n, ".")) return false;
+	if (!test(afnd, afd, &n, "0")) return false;
+	if (!test(afnd, afd, &n, "+0.0")) return false;
+	if (!test(afnd, afd, &n, "+.0")) return false;
+	if (!test(afnd, afd, &n, "+0.")) return false;
+	if (!test(afnd, afd, &n, "+.")) return false;
+	if (!test(afnd, afd, &n, "+0")) return false;
+	if (!test(afnd, afd, &n, "+000000.00000000")) return false;
 	printf("Test 1 ejecutado correctamente.\n");
+
+	AFNDADot(afnd);
+	AFNDADot(afd);
+	printf("\n");
 
 	AFNDElimina(afd);
 	AFNDElimina(afnd);
@@ -70,8 +86,9 @@ bool test1(bool debug) {
 bool test2(bool debug) {
 	AFND *afnd;
 	AFND *afd;
+	int n;
 
-	afnd = AFNDNuevo("af11", 6, 4);
+	afnd = AFNDNuevo("test2", 6, 4);
 	
 	AFNDInsertaSimbolo(afnd, "+");
 	AFNDInsertaSimbolo(afnd, "-");
@@ -99,20 +116,26 @@ bool test2(bool debug) {
 
 	afd = AFNDTransforma(afnd, debug);
 
+	n = 1;
 	printf("Test 2 (autómata de las diapositivas):\n");
-	if (!test(afnd, afd, 1, "0.0")) return false;
-	if (!test(afnd, afd, 2, "0.")) return false;
-	if (!test(afnd, afd, 3, "0")) return false;
-	if (!test(afnd, afd, 4, ".")) return false;
-	if (!test(afnd, afd, 5, "+0.0")) return false;
-	if (!test(afnd, afd, 6, "+0.")) return false;
-	if (!test(afnd, afd, 7, "+0")) return false;
-	if (!test(afnd, afd, 8, "+.")) return false;
-	if (!test(afnd, afd, 9, "-0.0")) return false;
-	if (!test(afnd, afd, 10, "-0.")) return false;
-	if (!test(afnd, afd, 11, "-0")) return false;
-	if (!test(afnd, afd, 12, "-.")) return false;
+	if (!test(afnd, afd, &n, "0.0")) return false;
+	if (!test(afnd, afd, &n, "0.")) return false;
+	if (!test(afnd, afd, &n, "0")) return false;
+	if (!test(afnd, afd, &n, ".")) return false;
+	if (!test(afnd, afd, &n, "+0.0")) return false;
+	if (!test(afnd, afd, &n, "+0.")) return false;
+	if (!test(afnd, afd, &n, "+0")) return false;
+	if (!test(afnd, afd, &n, "+.")) return false;
+	if (!test(afnd, afd, &n, "-0.0")) return false;
+	if (!test(afnd, afd, &n, "-0.")) return false;
+	if (!test(afnd, afd, &n, "-0")) return false;
+	if (!test(afnd, afd, &n, "-.")) return false;
+	if (!test(afnd, afd, &n, "-000000.00000000000")) return false;
 	printf("Test 2 ejecutado correctamente.\n");
+
+	AFNDADot(afnd);
+	AFNDADot(afd);
+	printf("\n");
 
 	AFNDElimina(afd);
 	AFNDElimina(afnd);
@@ -120,23 +143,80 @@ bool test2(bool debug) {
 	return true;
 }
 
-bool test(AFND *afnd, AFND *afd, int n, char *cadena) {
+bool test3(bool debug) {
+	AFND *afnd;
+	AFND *afd;
+	int n;
+
+	afnd = AFNDNuevo("test3", 5, 2);
+	
+	AFNDInsertaSimbolo(afnd, "0");
+	AFNDInsertaSimbolo(afnd, "1");
+	
+	AFNDInsertaEstado(afnd, "q0", INICIAL);
+	AFNDInsertaEstado(afnd, "q1", NORMAL);
+	AFNDInsertaEstado(afnd, "q2", NORMAL);
+	AFNDInsertaEstado(afnd, "q3", NORMAL);
+	AFNDInsertaEstado(afnd, "q4", FINAL);
+	
+	AFNDInsertaTransicion(afnd, "q0", "0", "q0");
+	AFNDInsertaTransicion(afnd, "q0", "1", "q0");
+	AFNDInsertaTransicion(afnd, "q0", "1", "q1");
+	AFNDInsertaTransicion(afnd, "q1", "0", "q2");
+	AFNDInsertaTransicion(afnd, "q1", "1", "q2");
+	AFNDInsertaTransicion(afnd, "q2", "0", "q3");
+	AFNDInsertaTransicion(afnd, "q2", "1", "q3");
+	AFNDInsertaTransicion(afnd, "q3", "0", "q4");
+	AFNDInsertaTransicion(afnd, "q3", "1", "q4");
+
+	AFNDCierraLTransicion(afnd);
+
+	afd = AFNDTransforma(afnd, debug);
+
+	n = 1;
+	printf("Test 3 (autómata de las diapositivas):\n");
+	if (!test(afnd, afd, &n, "1000")) return false;
+	if (!test(afnd, afd, &n, "1111")) return false;
+	if (!test(afnd, afd, &n, "1010")) return false;
+	if (!test(afnd, afd, &n, "1101")) return false;
+	if (!test(afnd, afd, &n, "000")) return false;
+	if (!test(afnd, afd, &n, "111")) return false;
+	if (!test(afnd, afd, &n, "010")) return false;
+	if (!test(afnd, afd, &n, "010")) return false;
+	if (!test(afnd, afd, &n, "00000000")) return false;
+	if (!test(afnd, afd, &n, "11111111")) return false;
+	if (!test(afnd, afd, &n, "00001000")) return false;
+	if (!test(afnd, afd, &n, "11110111")) return false;
+	printf("Test 3 ejecutado correctamente.\n");
+
+	AFNDADot(afnd);
+	AFNDADot(afd);
+
+	AFNDElimina(afd);
+	AFNDElimina(afnd);
+	printf("\n");
+
+	return true;
+}
+
+bool test(AFND *afnd, AFND *afd, int *n, char *cadena) {
 	bool acepta_afnd, acepta_afd;
 	acepta_afnd = procesar_entrada(afnd, cadena);
 	acepta_afd = procesar_entrada(afd, cadena);
 	if (acepta_afnd) {
 		if (acepta_afd) {
-			printf(" -> Cadena %d (%s): ambos aceptan.\n", n, cadena);
+			printf(" -> Cadena %d (%s): ambos aceptan.\n", *n, cadena);
 		} else {
-			printf(" -> Cadena %d (%s): AFND acepta y AFD rechaza. ERROR.\n", n, cadena);
+			printf(" -> Cadena %d (%s): AFND acepta y AFD rechaza. ERROR.\n", *n, cadena);
 		}
 	} else {
 		if (acepta_afd) {
-			printf(" -> Cadena %d (%s): ambos aceptan.\n", n, cadena);
+			printf(" -> Cadena %d (%s): ambos aceptan.\n", *n, cadena);
 		} else {
-			printf(" -> Cadena %d (%s): ambos rechazan.\n", n, cadena);
+			printf(" -> Cadena %d (%s): ambos rechazan.\n", *n, cadena);
 		}
 	}
+	*n = *n+1;
 	if (acepta_afnd != acepta_afd) printf("Saliendo por fallo\n");
 	return acepta_afnd == acepta_afd;
 }

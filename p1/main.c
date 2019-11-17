@@ -42,6 +42,7 @@ int main(int argc, char **argv) {
 
 	AFNDADot(afnd);
 	AFNDADot(afd);
+	printf("\n");
 
 	AFNDElimina(afd);
 	AFNDElimina(afnd);

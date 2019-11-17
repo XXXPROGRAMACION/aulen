@@ -7,6 +7,7 @@
 
 void clausuraLambda(AFND *afnd, IntList *subestados);
 IntList *transicionarConSimbolo(AFND *afnd, IntList *subestados, int simbolo);
+char *obtenerNombreAutomata(AFND *afnd);
 char *obtenerNombreEstado(AFND *afnd, IntList *subestados);
 int obtenerTipoEstado(AFND *afnd, IntList *subestados, int indice);
 bool esEstadoFinal(AFND *afnd, IntList *subestados);
@@ -73,7 +74,7 @@ AFND *AFNDTransforma(AFND *afnd, bool debug) {
         n_estados_procesados++;
     }
 
-    afd = AFNDNuevo("determinista", StateListSize(estados), AFNDNumSimbolos(afnd));
+    afd = AFNDNuevo(obtenerNombreAutomata(afnd), StateListSize(estados), AFNDNumSimbolos(afnd));
     if (afd == NULL) {
         StateListFree(estados);
         return NULL;
@@ -151,6 +152,30 @@ IntList *transicionarConSimbolo(AFND *afnd, IntList *subestados, int simbolo) {
     clausuraLambda(afnd, siguientes_subestados);
     IntListSort(siguientes_subestados);
     return siguientes_subestados;
+}
+
+char *obtenerNombreAutomata(AFND *afnd) {
+    FILE *file;
+    char nombre_afnd[256], *nombre_afd;
+    int tam;
+
+    file = fopen("nombre_aux.txt", "w");
+	AFNDImprime(file, afnd);
+	fclose(file);
+
+    file = fopen("nombre_aux.txt", "r");
+	fscanf(file, "%s={", nombre_afnd);
+	fclose(file);
+
+    tam = strlen(nombre_afnd);
+    nombre_afnd[tam-2] = '\0';
+    nombre_afd = (char *) malloc(sizeof(char)*tam+14);
+    if (nombre_afd == NULL) return NULL;
+
+    strcpy(nombre_afd, nombre_afnd);
+    strcat(nombre_afd, "_determinista");
+
+	return nombre_afd;
 }
 
 char *obtenerNombreEstado(AFND *afnd, IntList *subestados) {
