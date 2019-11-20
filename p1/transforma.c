@@ -19,7 +19,7 @@ AFND *AFNDTransforma(AFND *afnd, bool debug) {
     IntList *destinos_transiciones, *simbolos_transiciones;
     StateList *estados;
     int n_estados_procesados, indice, tipo_estado, i, j;
-    char *nombre_estado, *nombre_estado_origen, *nombre_estado_destino, *simbolo;
+    char *nombre_automata, *nombre_estado, *nombre_estado_origen, *nombre_estado_destino, *simbolo;
 
     if (afnd == NULL) return NULL;
 
@@ -84,7 +84,9 @@ AFND *AFNDTransforma(AFND *afnd, bool debug) {
     }
 
     /* Creamos el autómata determinista */
-    afd = AFNDNuevo(obtenerNombreAutomata(afnd), StateListSize(estados), AFNDNumSimbolos(afnd));
+    nombre_automata = obtenerNombreAutomata(afnd);
+    afd = AFNDNuevo(nombre_automata, StateListSize(estados), AFNDNumSimbolos(afnd));
+    free(nombre_automata);
     if (afd == NULL) {
         StateListFree(estados);
         return NULL;
