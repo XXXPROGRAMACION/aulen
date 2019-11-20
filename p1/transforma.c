@@ -42,26 +42,30 @@ AFND *AFNDTransforma(AFND *afnd, bool debug) {
 
     printDebug(debug, "Nuevos estados:\n");
 
-    n_estados_procesados = 0;
     /* A partir de los estados iniciales obtenidos, procesamos cada transición */
     /* Nota: Cuando no se añaden más estados, salimos del bucle ya que no podemos procesar más transiciones */
-    while (n_estados_procesados < StateListSize(estados)) {
-        subestados = StateListGetSubstates(estados, n_estados_procesados);      /* Obtenemos la lista de subestados de la lista estados en el indice n_estados_procesados */
-        destinos_transiciones = StateListGetTransitionsTargets(estados, n_estados_procesados); /* Obtenemos la lista de destinos */
-        simbolos_transiciones = StateListGetTransitionsSymbols(estados, n_estados_procesados);  /* Obtenemos la lista de símbolos */
+    for (n_estados_procesados = 0; n_estados_procesados < StateListSize(estados); n_estados_procesados++) {
+        /* Obtenemos la lista de subestados de la lista estados en el indice n_estados_procesados */
+        subestados = StateListGetSubstates(estados, n_estados_procesados);
+        /* Obtenemos la lista de destinos */
+        destinos_transiciones = StateListGetTransitionsTargets(estados, n_estados_procesados);
+        /* Obtenemos la lista de símbolos */
+        simbolos_transiciones = StateListGetTransitionsSymbols(estados, n_estados_procesados);
 
         printDebug(debug, "Procesando %d: ", n_estados_procesados);
         if (debug) IntListPrint(subestados);
 
         /* Por cada símbolo del afnd */
         for (i = 0; i < AFNDNumSimbolos(afnd); i++) {
-            subestados_siguientes = transicionarConSimbolo(afnd, subestados, i);    /* Obtenemos los estados a los que transicionar con el simbolo i */
+            /* Obtenemos los estados a los que transicionar con el simbolo i */
+            subestados_siguientes = transicionarConSimbolo(afnd, subestados, i);
             if (IntListSize(subestados_siguientes) == 0) {
                 IntListFree(subestados_siguientes);
                 continue;
             }
 
-            if (!StateListContainsSubstates(estados, subestados_siguientes)) {  /* Si no están los estados a los que podemos transicionar con el simbolo i, los añadimos a estados*/
+            /* Si no están los estados a los que podemos transicionar con el simbolo i, los añadimos a estados*/
+            if (!StateListContainsSubstates(estados, subestados_siguientes)) {
                 StateListAdd(estados, subestados_siguientes);
 
                 printDebug(debug, " -> Estado %d añadido\n", StateListSize(estados)-1);
@@ -77,8 +81,6 @@ AFND *AFNDTransforma(AFND *afnd, bool debug) {
 
             IntListFree(subestados_siguientes);
         }
-
-        n_estados_procesados++;
     }
 
     /* Creamos el autómata determinista */
@@ -122,12 +124,16 @@ void clausuraLambda(AFND *afnd, IntList *subestados) {
     bool hay_lambda;
     int e, i, j;
 
-    for (i = 0; i < AFNDNumEstados(afnd); i++) {        /* Por cada estado en afnd */
-        if (IntListContains(subestados, i)) continue;   /* Si ya está pasamos */
+    /* Por cada estado en afnd */
+    for (i = 0; i < AFNDNumEstados(afnd); i++) {
+        /* Si ya está pasamos */
+        if (IntListContains(subestados, i)) continue;
         hay_lambda = false;
-        for (j = 0; j < IntListSize(subestados); j++) { /* Por cada estado en subestados */
+        /* Por cada estado en subestados */
+        for (j = 0; j < IntListSize(subestados); j++) {
             e = IntListGet(subestados, j);
-            if (AFNDCierreLTransicionIJ(afnd, e, i)) {  /* Miramos las transiciones lambda que hay */
+            /* Miramos las transiciones lambda que hay */
+            if (AFNDCierreLTransicionIJ(afnd, e, i)) {
                 hay_lambda = true;
                 break;
             }
@@ -143,15 +149,18 @@ IntList *transicionarConSimbolo(AFND *afnd, IntList *subestados, int simbolo) {
     bool hay_transicion;
     int estado, i, j;
 
-    siguientes_subestados = IntListCreate();        /* Creamos la lista de subestados siguientes */
+    /* Creamos la lista de subestados siguientes */
+    siguientes_subestados = IntListCreate();
     if (siguientes_subestados == NULL) return NULL;
 
-    for (i = 0; i < AFNDNumEstados(afnd); i++) {    /* Por cada estado en afnd */
+    /* Por cada estado en afnd */
+    for (i = 0; i < AFNDNumEstados(afnd); i++) {
         if (IntListContains(siguientes_subestados, i)) continue;
         hay_transicion = false;
         for (j = 0; j < IntListSize(subestados); j++) {
             estado = IntListGet(subestados, j);
-            if (AFNDTransicionIndicesEstadoiSimboloEstadof(afnd, estado, simbolo, i)) { /* Miramos si hay transicion con el simbolo */
+            /* Miramos si hay transicion con el simbolo */
+            if (AFNDTransicionIndicesEstadoiSimboloEstadof(afnd, estado, simbolo, i)) {
                 hay_transicion = true;
                 break;
             }
@@ -159,7 +168,8 @@ IntList *transicionarConSimbolo(AFND *afnd, IntList *subestados, int simbolo) {
         if (hay_transicion) IntListAdd(siguientes_subestados, i);
     }
 
-    clausuraLambda(afnd, siguientes_subestados);    /* Obtenemos las transiciones lambda de los subestados siguientes */
+    /* Obtenemos las transiciones lambda de los subestados siguientes */
+    clausuraLambda(afnd, siguientes_subestados);
     IntListSort(siguientes_subestados);
     return siguientes_subestados;
 }

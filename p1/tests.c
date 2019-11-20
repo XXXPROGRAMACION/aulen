@@ -176,7 +176,7 @@ bool test3(bool debug) {
 	afd = AFNDTransforma(afnd, debug);
 
 	n = 1;
-	printf("Test 3 (autómata de las diapositivas):\n");
+	printf("Test 3 (autómata con transformación de gran tamaño):\n");
 	if (!test(afnd, afd, &n, "1000")) return false;
 	if (!test(afnd, afd, &n, "1111")) return false;
 	if (!test(afnd, afd, &n, "1010")) return false;
