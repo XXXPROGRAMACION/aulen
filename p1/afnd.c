@@ -1398,16 +1398,16 @@ _afnd_ofus_bad_vi=AFNDNuevo(_afnd_ofus_fobar_vi,2,0);free(_afnd_ofus_fobar_vi)
 ;AFNDInsertaEstado(_afnd_ofus_bad_vi,"q0",INICIAL);AFNDInsertaEstado(
 _afnd_ofus_bad_vi,"qf",FINAL);return _afnd_ofus_bad_vi;}void AFNDADot(AFND*
 p_afnd){int i,j,_afnd_ofus_foobaz_cyan;FILE*_afnd_ofus_silly_fast;char*
-_afnd_ofus_silly_small;fprintf(stdout,"ENTRA");_afnd_ofus_silly_small=(char*)
+_afnd_ofus_silly_small;_afnd_ofus_silly_small=(char*)
 malloc(sizeof(char)*(strlen(p_afnd->nombre)+1+strlen(".dot")));strcpy(
 _afnd_ofus_silly_small,p_afnd->nombre);strcat(_afnd_ofus_silly_small,".dot");
 _afnd_ofus_silly_fast=fopen(_afnd_ofus_silly_small,"w");free(
-_afnd_ofus_silly_small);printf("CREA Nombre fichero");fprintf(
+_afnd_ofus_silly_small);fprintf(
 _afnd_ofus_silly_fast,"digraph %s  { rankdir=LR;\n",p_afnd->nombre);fprintf(
 _afnd_ofus_silly_fast,"\t_invisible [style=\"invis\"];\n");{i=0;
 _afnd_ofus_silly_big:if(!(i<p_afnd->num_estados))goto _afnd_ofus_silly_ok;goto
  _afnd_ofus_silly_hello;_afnd_ofus_silly_bye:i++;goto _afnd_ofus_silly_big;
-_afnd_ofus_silly_hello:{printf("ESTADO A DOT");_afnd_ofus_emacs(
+_afnd_ofus_silly_hello:{_afnd_ofus_emacs(
 _afnd_ofus_silly_fast,p_afnd->_afnd_ofus_dog_obscure[i]);}goto 
 _afnd_ofus_silly_bye;_afnd_ofus_silly_ok:;}fprintf(_afnd_ofus_silly_fast,
 "\t_invisible -> %s ;\n",AFNDNombreEstadoEn(p_afnd,AFNDIndiceEstadoInicial(

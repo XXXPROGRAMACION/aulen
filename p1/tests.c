@@ -16,12 +16,14 @@ int main(int argc, char **argv) {
 
 	if (argc > 1 && strcmp(argv[1], "--debug") == 0) debug = true;
 	else debug = false;
+
+	printf("Ejecutando los tests.\n\n");
 	
 	if (!test1(debug)) return 0;
 	if (!test2(debug)) return 0;
 	if (!test3(debug)) return 0;
 
-	printf("Todos los tests se han ejecutado correctamente.");
+	printf("Todos los tests se han ejecutado correctamente.\n");
 
 	return 0;
 }
