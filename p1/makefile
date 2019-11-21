@@ -9,13 +9,13 @@ run:
 	./main
 	
 debug:
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose ./main --debug
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./main --debug
 
 run_tests:
 	./tests
 
 debug_tests:
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose ./tests --debug
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./tests --debug
 
 clean:
 	rm -f *.o $(EXE) *.txt *.dot
