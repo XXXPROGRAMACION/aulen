@@ -11,8 +11,8 @@ int main(int argc, char **argv) {
 
 	if (argc > 1 && strcmp(argv[1], "--debug") == 0) debug = true;
 	else debug = false;
-	
-	afd = AFNDNuevo("afd_diapositivas", 8, 2);
+
+	afd = AFNDNuevo("afd_diapositivas", 9, 2);
 	
 	AFNDInsertaSimbolo(afd, "0");
 	AFNDInsertaSimbolo(afd, "1");
@@ -25,6 +25,7 @@ int main(int argc, char **argv) {
 	AFNDInsertaEstado(afd, "F", NORMAL);
 	AFNDInsertaEstado(afd, "G", NORMAL);
 	AFNDInsertaEstado(afd, "H", NORMAL);
+	AFNDInsertaEstado(afd, "I", NORMAL);
 	
 	AFNDInsertaTransicion(afd, "A", "0", "B");
 	AFNDInsertaTransicion(afd, "A", "1", "F");
@@ -41,6 +42,7 @@ int main(int argc, char **argv) {
 	AFNDInsertaTransicion(afd, "G", "0", "G");
 	AFNDInsertaTransicion(afd, "G", "1", "E");
 	AFNDInsertaTransicion(afd, "H", "0", "G");
+	AFNDInsertaTransicion(afd, "H", "0", "I");
 
 	AFNDMinimiza(afd, debug);
 
