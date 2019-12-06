@@ -8,13 +8,15 @@
 IntList *obtenerEstadosAccesibles(AFND *afd, IntList *estados_filtrados, bool debug);
 IntList *obtenerEstadosUtiles(AFND *afd, IntList *estados_filtrados, bool debug);
 StateList *obtenerEstadosReducidos(AFND *afd, IntList *estados_filtrados, bool debug);
-bool compartenClase(StateList *cociente_actual, IntList *estado_actual, IntList *estado_cabeza);
+bool comprobarMismaClase(AFND *afd, StateList *cociente_actual, int estado_actual, int estado_cabeza);
+int obtenerTransicionConSimbolo(AFND *afd, int estado, int s);
 
 AFND *AFNDMinimiza(AFND *afd, bool debug) {
     IntList *estados_originales;
     IntList *estados_accesibles, *estados_accesibles_utiles;
     StateList *estados_reducidos;
-    int estado_actual, i;
+    IntList *estado_reducido_actual;
+    int estado_actual, i, j;
 
     if (afd == NULL) return NULL;
 
@@ -76,9 +78,22 @@ AFND *AFNDMinimiza(AFND *afd, bool debug) {
         IntListFree(estados_accesibles);
         return NULL;
     }
-    
-    /* Construir nuevo AFD */
-    /* FALTA POR IMPLEMENTAR */
+
+    if (debug) {
+        printf("Cociente final / Estados equivalentes:\n");
+        for (i = 0; i < StateListSize(estados_reducidos); i++) {
+            estado_reducido_actual = StateListGetSubstates(estados_reducidos, i);
+            printf(" -> {");
+            for (j = 0; j < IntListSize(estado_reducido_actual); j++) {
+                estado_actual = IntListGet(estado_reducido_actual, j);
+                printf("%s", AFNDNombreEstadoEn(afd, estado_actual));
+                if (j < IntListSize(estado_reducido_actual)-1) {
+                    printf(", ");
+                }
+            }
+            printf("}\n");
+        }
+    }
 
     StateListFree(estados_reducidos);
     IntListFree(estados_accesibles_utiles);
@@ -157,7 +172,7 @@ StateList *obtenerEstadosReducidos(AFND *afd, IntList *estados_filtrados, bool d
     IntList *clase_actual, *clase_nueva;
     IntList *clase_no_finales, *clase_finales;
     int estado_actual, estado_cabeza, tipo_estado, indice_cociente_actual;
-    int i, j, k;
+    int n_cocientes, i, j, k;
     bool clase_existente, ha_cambiado;
 
     cociente_actual = StateListCreate();
@@ -192,7 +207,25 @@ StateList *obtenerEstadosReducidos(AFND *afd, IntList *estados_filtrados, bool d
     IntListFree(clase_finales);
     IntListFree(clase_no_finales);
     
-    do {
+    n_cocientes = 0;
+    do {        
+        if (debug) {
+            printf("Cociente %d:\n", n_cocientes);
+            for (i = 0; i < StateListSize(cociente_actual); i++) {
+                clase_actual = StateListGetSubstates(cociente_actual, i);
+                printf(" -> {");
+                for (j = 0; j < IntListSize(clase_actual); j++) {
+                    estado_actual = IntListGet(clase_actual, j);
+                    printf("%s", AFNDNombreEstadoEn(afd, estado_actual));
+                    if (j < IntListSize(clase_actual)-1) {
+                        printf(", ");
+                    }
+                }
+                printf("}\n");
+            }
+        }
+
+        n_cocientes++;
         cociente_siguiente = StateListCreate();
         if (cociente_siguiente == NULL) {
             StateListFree(cociente_actual);
@@ -208,7 +241,7 @@ StateList *obtenerEstadosReducidos(AFND *afd, IntList *estados_filtrados, bool d
                 for (k = indice_cociente_actual; k < StateListSize(cociente_siguiente); k++) {
                     clase_nueva = StateListGetSubstates(cociente_siguiente, k);
                     estado_cabeza = IntListGet(clase_nueva, 0);
-                    if (compartenClase(cociente_actual, estado_actual, estado_cabeza)) {
+                    if (comprobarMismaClase(afd, cociente_actual, estado_actual, estado_cabeza)) {
                         IntListAdd(clase_nueva, estado_actual);
                         clase_existente = true;
                         break;
@@ -235,8 +268,37 @@ StateList *obtenerEstadosReducidos(AFND *afd, IntList *estados_filtrados, bool d
     return cociente_actual;
 }
 
+bool comprobarMismaClase(AFND *afd, StateList *cociente, int estado_actual, int estado_cabeza) {
+    IntList *clase_actual;
+    int transicion_estado_actual, transicion_estado_cabeza;
+    bool contiene_actual, contiene_cabeza;
+    int s, i;
 
-bool compartenClase(StateList *cociente_actual, IntList *estado_actual, IntList *estado_cabeza) {
-    /* FALTA POR IMPLEMENTAR */
-    return false;
+    for (s = 0; s < AFNDNumSimbolos(afd); s++) {
+        transicion_estado_actual = obtenerTransicionConSimbolo(afd, estado_actual, s);
+        transicion_estado_cabeza = obtenerTransicionConSimbolo(afd, estado_cabeza, s);
+
+        if (transicion_estado_actual == -1 && transicion_estado_cabeza == -1) continue;
+        if (transicion_estado_actual == -1) return false;
+        if (transicion_estado_cabeza == -1) return false;
+
+        for (i = 0; i < StateListSize(cociente); i++) {
+            clase_actual = StateListGetSubstates(cociente, i);
+            contiene_actual = IntListContains(clase_actual, transicion_estado_actual);
+            contiene_cabeza = IntListContains(clase_actual, transicion_estado_cabeza);
+            if (contiene_actual && contiene_cabeza) break;
+            if (contiene_actual) return false;
+            if (contiene_cabeza) return false;
+        }
+    }
+
+    return true;
+}
+
+int obtenerTransicionConSimbolo(AFND *afd, int estado, int simbolo) {
+    int i;
+    for (i = 0; i < AFNDNumEstados(afd); i++) {
+        if (AFNDTransicionIndicesEstadoiSimboloEstadof(afd, estado, simbolo, i)) return i;
+    }
+    return -1;
 }
