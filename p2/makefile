@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -ansi -pedantic
 CFLAGSEX =
-EXE = main tests
+EXE = main
 
 all: $(EXE)
 
@@ -11,22 +11,16 @@ run:
 debug:
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./main --debug
 
-run_tests:
-	./tests
-
-debug_tests:
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./tests --debug
-
 clean:
 	rm -f *.o $(EXE) *.txt *.dot
 
-$(EXE): %: %.o afnd.o transforma.o int_list.o state_list.o
-	$(CC) $(CFLAGS) -o $@ $@.o afnd.o transforma.o int_list.o state_list.o
+$(EXE): %: %.o afnd.o minimiza.o int_list.o state_list.o
+	$(CC) $(CFLAGS) -o $@ $@.o afnd.o minimiza.o int_list.o state_list.o
 
 afnd.o: afnd.c afnd.h
 	$(CC) $(CFLAGSEX) -c $<
 
-transforma.o: transforma.c transforma.h
+minimiza.o: minimiza.c minimiza.h
 	$(CC) $(CFLAGS) -c $<
 
 int_list.o: int_list.c int_list.h
@@ -36,7 +30,4 @@ state_list.o: state_list.c state_list.h
 	$(CC) $(CFLAGS) -c $<
 
 main.o: main.c
-	$(CC) $(CFLAGS) -c $<
-
-tests.o: tests.c
 	$(CC) $(CFLAGS) -c $<

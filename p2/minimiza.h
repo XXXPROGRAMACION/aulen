@@ -4,6 +4,6 @@
 #include "afnd.h" 
 #include <stdbool.h>
 
-AFND *AFNDTransforma(AFND *afnd, bool debug);
+AFND *AFNDMinimiza(AFND *afd, bool debug);
 
 #endif
