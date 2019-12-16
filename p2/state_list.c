@@ -38,22 +38,11 @@ void StateListFree(StateList *state_list) {
 }
 
 void StateListAdd(StateList *state_list, IntList *substates) {
-    IntList *substates_copy, *transitions_targets, *transitions_symbols;
+    IntList *substates_copy;
     if (state_list == NULL) return;
 
     substates_copy = IntListCopy(substates);
     if (substates_copy == NULL) return;
-    transitions_targets = IntListCreate();
-    if (transitions_targets == NULL) {
-        IntListFree(substates_copy);
-        return;
-    }
-    transitions_symbols = IntListCreate();
-    if (transitions_symbols == NULL) {
-        IntListFree(transitions_targets);
-        IntListFree(substates_copy);
-        return;
-    }
 
     if (state_list->size >= state_list->max_size) StateListResize(state_list);
     state_list->substates[state_list->size] = substates_copy;

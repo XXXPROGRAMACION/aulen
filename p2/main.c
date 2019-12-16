@@ -6,7 +6,7 @@
 #include "minimiza.h"
 
 int main(int argc, char **argv) {
-	AFND *afd;
+	AFND *afd, *afd_minimizado;
 	bool debug;
 
 	if (argc > 1 && strcmp(argv[1], "--debug") == 0) debug = true;
@@ -43,8 +43,12 @@ int main(int argc, char **argv) {
 	AFNDInsertaTransicion(afd, "H", "0", "G");
 	AFNDInsertaTransicion(afd, "H", "1", "C");
 
-	AFNDMinimiza(afd, debug);
+	afd_minimizado = AFNDMinimiza(afd, debug);
 
+	AFNDADot(afd);
+	AFNDADot(afd_minimizado);
+
+	AFNDElimina(afd_minimizado);
 	AFNDElimina(afd);
 
 	return 0;

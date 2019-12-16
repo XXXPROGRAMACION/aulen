@@ -62,6 +62,7 @@ bool test1(bool debug) {
 
 	n = 1;
 	printf("Test 1 (autómata del enunciado):\n");
+	printf("Pasa de %d a %d estados\n", AFNDNumEstados(afnd), AFNDNumEstados(afd));
 	if (!test(afnd, afd, &n, "0.0")) return false;
 	if (!test(afnd, afd, &n, ".0")) return false;
 	if (!test(afnd, afd, &n, "0.")) return false;
@@ -120,6 +121,7 @@ bool test2(bool debug) {
 
 	n = 1;
 	printf("Test 2 (autómata de las diapositivas):\n");
+	printf("Pasa de %d a %d estados\n", AFNDNumEstados(afnd), AFNDNumEstados(afd));
 	if (!test(afnd, afd, &n, "0.0")) return false;
 	if (!test(afnd, afd, &n, "0.")) return false;
 	if (!test(afnd, afd, &n, "0")) return false;
@@ -177,6 +179,7 @@ bool test3(bool debug) {
 
 	n = 1;
 	printf("Test 3 (autómata con transformación de gran tamaño):\n");
+	printf("Pasa de %d a %d estados\n", AFNDNumEstados(afnd), AFNDNumEstados(afd));
 	if (!test(afnd, afd, &n, "1000")) return false;
 	if (!test(afnd, afd, &n, "1111")) return false;
 	if (!test(afnd, afd, &n, "1010")) return false;
@@ -207,15 +210,15 @@ bool test(AFND *afnd, AFND *afd, int *n, char *cadena) {
 	acepta_afd = procesar_entrada(afd, cadena);
 	if (acepta_afnd) {
 		if (acepta_afd) {
-			printf(" -> Cadena %d (%s): ambos aceptan.\n", *n, cadena);
+			printf(" -> Cadena %d (%s): aceptan.\n", *n, cadena);
 		} else {
 			printf(" -> Cadena %d (%s): AFND acepta y AFD rechaza. ERROR.\n", *n, cadena);
 		}
 	} else {
 		if (acepta_afd) {
-			printf(" -> Cadena %d (%s): ambos aceptan.\n", *n, cadena);
+			printf(" -> Cadena %d (%s): AFND rechaza y AFD acepta. ERROR.\n", *n, cadena);
 		} else {
-			printf(" -> Cadena %d (%s): ambos rechazan.\n", *n, cadena);
+			printf(" -> Cadena %d (%s): rechazan.\n", *n, cadena);
 		}
 	}
 	*n = *n+1;

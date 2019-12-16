@@ -186,7 +186,7 @@ char *obtenerNombreAutomata(AFND *afnd) {
 	fclose(file);
 
     file = fopen("nombre_aux.txt", "r");
-	fscanf(file, "%s={", nombre_afnd);
+	fscanf(file, "%s", nombre_afnd);
 	fclose(file);
 
     tam = strlen(nombre_afnd);
